@@ -1,5 +1,7 @@
 package com.denverdebuggets.oopureats.ObserverUtils;
 
+import com.denverdebuggets.oopureats.dto.OrderDetailsDTO;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -24,14 +26,15 @@ public class OrderBus implements Observable {
     public void registerObserver(ObserverEvents event, Observer observer) {
         observers.get(event).add(observer);
     }
+    
     public void unregisterObserver(ObserverEvents event, Observer observer) {
         observers.get(event).remove(observer);
     }
-    public void notifyObservers(ObserverEvents event, String orderDetails) {
+    
+    public void notifyObservers(ObserverEvents event, OrderDetailsDTO orderDTO) {
         for (Observer observer : observers.get(event)) {
-            observer.update(orderDetails);
+            observer.update(orderDTO);
         }
     }
-
-
+    
 }

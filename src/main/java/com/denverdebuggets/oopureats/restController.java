@@ -1,6 +1,7 @@
 package com.denverdebuggets.oopureats;
 
 import com.denverdebuggets.oopureats.ObserverUtils.ObserverEvents;
+import com.denverdebuggets.oopureats.ObserverUtils.OrderBus;
 import com.denverdebuggets.oopureats.dto.OrderDetailsDTO;
 import com.denverdebuggets.oopureats.model.OrderStatus;
 import com.denverdebuggets.oopureats.service.OrderDetailsService;
@@ -20,10 +21,12 @@ public class restController {
     private static final Logger log = LoggerFactory.getLogger(restController.class);
     
     private final OrderDetailsService orderDetailsService;
+    private final OrderBus orderBus;
     
     @Autowired
     public restController(OrderDetailsService orderDetailsService) {
         this.orderDetailsService = orderDetailsService;
+        this.orderBus = OrderBus.getInstance();
     }
 
     @GetMapping("/{id}")
@@ -70,9 +73,13 @@ public class restController {
 
     @PostMapping
     public ResponseEntity<OrderDetailsDTO> createOrder(@RequestBody OrderDetailsDTO orderDTO) {
-        log.info("Creating new order");
-        OrderDetailsDTO createdOrder = orderDetailsService.createOrder(orderDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
+        log.info("Creating new order via OrderBus for restaurant type: {}", orderDTO.getRestaurantType());
+        
+        // Notify OrderBus which will notify the appropriate restaurant to create the order
+        // The restaurant creates the order and returns it
+       orderBus.notifyObservers(orderDTO.getRestaurantType(), orderDTO);
+        
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/{id}")

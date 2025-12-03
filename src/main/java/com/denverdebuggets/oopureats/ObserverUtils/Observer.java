@@ -1,5 +1,7 @@
 package com.denverdebuggets.oopureats.ObserverUtils;
 
+import com.denverdebuggets.oopureats.dto.OrderDetailsDTO;
+
 public interface Observer {
-    void update(String orderDetails);
+    void update(OrderDetailsDTO orderDTO);
 }

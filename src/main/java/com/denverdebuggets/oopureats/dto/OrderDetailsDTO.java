@@ -1,8 +1,6 @@
 package com.denverdebuggets.oopureats.dto;
 
 import com.denverdebuggets.oopureats.ObserverUtils.ObserverEvents;
-import com.denverdebuggets.oopureats.model.Item;
-import com.denverdebuggets.oopureats.model.Order;
 import com.denverdebuggets.oopureats.model.OrderItem;
 import com.denverdebuggets.oopureats.model.OrderStatus;
 import java.time.LocalDateTime;
