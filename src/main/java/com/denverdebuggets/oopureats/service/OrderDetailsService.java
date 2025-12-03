@@ -73,10 +73,8 @@ public class OrderDetailsService {
         
         return orderDetailsRepository.findById(id)
                 .map(existingOrder -> {
-                    existingOrder.setRestaurantType(orderDTO.getRestaurantType());
-                    existingOrder.setOrderItems(orderDTO.getOrderItems());
+                    // restaurantType and orderItems are now immutable
                     existingOrder.setStatus(orderDTO.getStatus());
-                    
                     OrderDetails updatedOrder = orderDetailsRepository.save(existingOrder);
                     log.info("Order updated successfully: {}", id);
                     return convertToDTO(updatedOrder);
@@ -118,19 +116,15 @@ public class OrderDetailsService {
     }
 
     private OrderDetails convertToEntity(OrderDetailsDTO orderDTO) {
-        OrderDetails order = new OrderDetails(
-                orderDTO.getRestaurantType(),
-                orderDTO.getOrderItems()
-        );
-        
+        OrderDetails.Builder builder = OrderDetails.builder()
+            .restaurantType(orderDTO.getRestaurantType())
+            .orderItems(orderDTO.getOrderItems());
         if (orderDTO.getStatus() != null) {
-            order.setStatus(orderDTO.getStatus());
+            builder.status(orderDTO.getStatus());
         }
         if (orderDTO.getOrderDate() != null) {
-            order.setOrderDate(orderDTO.getOrderDate());
+            builder.orderDate(orderDTO.getOrderDate());
         }
-        
-        return order;
+        return builder.build();
     }
 }
-

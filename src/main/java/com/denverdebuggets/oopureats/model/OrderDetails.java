@@ -7,39 +7,47 @@ import java.util.List;
 
 @Entity
 public class OrderDetails implements Order {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ObserverEvents restaurantType;
+    private final ObserverEvents restaurantType;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")
-    private List<OrderItem> orderItems;
+    private final List<OrderItem> orderItems;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status;
-
     @Column(nullable = false)
-    private LocalDateTime orderDate;
+    private final LocalDateTime orderDate;
 
+    // JPA requires a no-args constructor
     public OrderDetails() {
-        this.orderDate = LocalDateTime.now();
-    }
-
-    public OrderDetails(ObserverEvents restaurantType, List<OrderItem> orderItems) {
-        this.restaurantType = restaurantType;
-        this.orderItems = orderItems;
+        this.restaurantType = null;
+        this.orderItems = null;
         this.orderDate = LocalDateTime.now();
         this.status = OrderStatus.ORDERED;
+    }
+
+    private OrderDetails(Builder builder) {
+        this.id = builder.id;
+        this.restaurantType = builder.restaurantType;
+        this.orderItems = builder.orderItems;
+        this.status = builder.status != null ? builder.status : OrderStatus.ORDERED;
+        this.orderDate = builder.orderDate != null ? builder.orderDate : LocalDateTime.now();
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public Long getId() {
         return id;
     }
 
+    // Setter for id (needed for JPA)
     public void setId(Long id) {
         this.id = id;
     }
@@ -48,16 +56,8 @@ public class OrderDetails implements Order {
         return restaurantType;
     }
 
-    public void setRestaurantType(ObserverEvents restaurantType) {
-        this.restaurantType = restaurantType;
-    }
-
     public List<OrderItem> getOrderItems() {
         return orderItems;
-    }
-
-    public void setOrderItems(List<OrderItem> orderItems) {
-        this.orderItems = orderItems;
     }
 
     @Override
@@ -71,6 +71,7 @@ public class OrderDetails implements Order {
         return status;
     }
 
+    // Setter for status (needed for JPA and status changes)
     public void setStatus(OrderStatus status) {
         this.status = status;
     }
@@ -78,10 +79,6 @@ public class OrderDetails implements Order {
     @Override
     public LocalDateTime getOrderDate() {
         return orderDate;
-    }
-
-    public void setOrderDate(LocalDateTime orderDate) {
-        this.orderDate = orderDate;
     }
 
     @Override
@@ -95,5 +92,37 @@ public class OrderDetails implements Order {
                 ", status=" + status +
                 ", orderDate=" + orderDate +
                 '}';
+    }
+
+    public static class Builder {
+        private Long id;
+        private ObserverEvents restaurantType;
+        private List<OrderItem> orderItems;
+        private OrderStatus status;
+        private LocalDateTime orderDate;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+        public Builder restaurantType(ObserverEvents restaurantType) {
+            this.restaurantType = restaurantType;
+            return this;
+        }
+        public Builder orderItems(List<OrderItem> orderItems) {
+            this.orderItems = orderItems;
+            return this;
+        }
+        public Builder status(OrderStatus status) {
+            this.status = status;
+            return this;
+        }
+        public Builder orderDate(LocalDateTime orderDate) {
+            this.orderDate = orderDate;
+            return this;
+        }
+        public OrderDetails build() {
+            return new OrderDetails(this);
+        }
     }
 }

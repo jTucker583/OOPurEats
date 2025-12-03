@@ -11,7 +11,10 @@ class OrderDetailsTest {
     void testConstructorAndGetters() {
         OrderItem item1 = new OrderItem(null, "Burger", 10.0, "Tasty", 2);
         OrderItem item2 = new OrderItem(null, "Fries", 5.0, "Crispy", 1);
-        OrderDetails order = new OrderDetails(ObserverEvents.PIZZA_RESTAURANT, List.of(item1, item2));
+        OrderDetails order = OrderDetails.builder()
+            .restaurantType(ObserverEvents.PIZZA_RESTAURANT)
+            .orderItems(List.of(item1, item2))
+            .build();
         assertEquals(ObserverEvents.PIZZA_RESTAURANT, order.getRestaurantType());
         assertEquals(2, order.getOrderItems().size());
         assertEquals(OrderStatus.ORDERED, order.getStatus());
@@ -22,21 +25,21 @@ class OrderDetailsTest {
     void testSetters() {
         OrderDetails order = new OrderDetails();
         order.setId(123L);
-        order.setRestaurantType(ObserverEvents.STEAK_RESTAURANT);
         order.setStatus(OrderStatus.DELIVERED);
         LocalDateTime now = LocalDateTime.now();
-        order.setOrderDate(now);
+        // restaurantType and orderDate are final and set via builder only
         assertEquals(123L, order.getId());
-        assertEquals(ObserverEvents.STEAK_RESTAURANT, order.getRestaurantType());
         assertEquals(OrderStatus.DELIVERED, order.getStatus());
-        assertEquals(now, order.getOrderDate());
     }
 
     @Test
     void testGetTotalAmount() {
         OrderItem item1 = new OrderItem(null, "Burger", 10.0, "Tasty", 2);
         OrderItem item2 = new OrderItem(null, "Fries", 5.0, "Crispy", 1);
-        OrderDetails order = new OrderDetails(ObserverEvents.PIZZA_RESTAURANT, List.of(item1, item2));
+        OrderDetails order = OrderDetails.builder()
+            .restaurantType(ObserverEvents.PIZZA_RESTAURANT)
+            .orderItems(List.of(item1, item2))
+            .build();
         assertEquals(15.0, order.getTotalAmount());
     }
 
