@@ -1,18 +1,22 @@
 package com.denverdebuggets.oopureats.dto;
 
 import com.denverdebuggets.oopureats.ObserverUtils.ObserverEvents;
+import com.denverdebuggets.oopureats.model.Item;
+import com.denverdebuggets.oopureats.model.Order;
+import com.denverdebuggets.oopureats.model.OrderItem;
 import com.denverdebuggets.oopureats.model.OrderStatus;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class OrderDetailsDTO {
     
     private ObserverEvents restaurantType;
-    private String orderItems;
+    private List<OrderItem> orderItems;
     private Double totalAmount;
     private OrderStatus status;
     private LocalDateTime orderDate;
 
-    public OrderDetailsDTO(ObserverEvents restaurantType, String orderItems, 
+    public OrderDetailsDTO(ObserverEvents restaurantType, List<OrderItem> orderItems,
                           Double totalAmount, OrderStatus status, 
                           LocalDateTime orderDate) {
         this.restaurantType = restaurantType;
@@ -30,11 +34,11 @@ public class OrderDetailsDTO {
         this.restaurantType = restaurantType;
     }
     
-    public String getOrderItems() {
+    public List<OrderItem> getOrderItems() {
         return orderItems;
     }
     
-    public void setOrderItems(String orderItems) {
+    public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
     

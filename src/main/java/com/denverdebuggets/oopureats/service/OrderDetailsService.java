@@ -75,7 +75,6 @@ public class OrderDetailsService {
                 .map(existingOrder -> {
                     existingOrder.setRestaurantType(orderDTO.getRestaurantType());
                     existingOrder.setOrderItems(orderDTO.getOrderItems());
-                    existingOrder.setTotalAmount(orderDTO.getTotalAmount());
                     existingOrder.setStatus(orderDTO.getStatus());
                     
                     OrderDetails updatedOrder = orderDetailsRepository.save(existingOrder);
@@ -121,8 +120,7 @@ public class OrderDetailsService {
     private OrderDetails convertToEntity(OrderDetailsDTO orderDTO) {
         OrderDetails order = new OrderDetails(
                 orderDTO.getRestaurantType(),
-                orderDTO.getOrderItems(),
-                orderDTO.getTotalAmount()
+                orderDTO.getOrderItems()
         );
         
         if (orderDTO.getStatus() != null) {
