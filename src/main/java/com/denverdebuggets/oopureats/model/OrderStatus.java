@@ -7,6 +7,7 @@ public enum OrderStatus {
     ORDERED,
     INPROGRESS,
     DONE,
-    DELIVERED
+    DELIVERED,
+    CANCELED
 }
 

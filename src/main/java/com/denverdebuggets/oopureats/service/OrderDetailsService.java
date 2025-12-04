@@ -23,20 +23,26 @@ public class OrderDetailsService {
     private static final Logger log = LoggerFactory.getLogger(OrderDetailsService.class);
     
     private final OrderDetailsRepository orderDetailsRepository;
-    
+    private final OrderStateMachineService stateMachineService;
+
     @Autowired
-    public OrderDetailsService(OrderDetailsRepository orderDetailsRepository) {
+    public OrderDetailsService(OrderDetailsRepository orderDetailsRepository,
+                             OrderStateMachineService stateMachineService) {
         this.orderDetailsRepository = orderDetailsRepository;
+        this.stateMachineService = stateMachineService;
     }
     
 
     public OrderDetailsDTO createOrder(OrderDetailsDTO orderDTO) {
         log.info("Creating new order");
-        
         OrderDetails order = convertToEntity(orderDTO);
+        if (order.getStatus() == null) {
+            order.setStatus(OrderStatus.ORDERED);
+        }
+
         OrderDetails savedOrder = orderDetailsRepository.save(order);
-        
-        log.info("Order created with ID: {}", savedOrder.getId());
+        log.info("Order created with ID: {} and initial status: {}",
+                savedOrder.getId(), savedOrder.getStatus());
         return convertToDTO(savedOrder);
     }
 
@@ -73,7 +79,6 @@ public class OrderDetailsService {
         
         return orderDetailsRepository.findById(id)
                 .map(existingOrder -> {
-                    // restaurantType and orderItems are now immutable
                     existingOrder.setStatus(orderDTO.getStatus());
                     OrderDetails updatedOrder = orderDetailsRepository.save(existingOrder);
                     log.info("Order updated successfully: {}", id);
@@ -81,15 +86,65 @@ public class OrderDetailsService {
                 });
     }
 
+    public Optional<OrderDetailsDTO> progressOrder(Long id) {
+        log.info("Progressing order with ID: {}", id);
 
-    public Optional<OrderDetailsDTO> updateOrderStatus(Long id, OrderStatus status) {
-        log.info("Updating order status for ID: {} to status: {}", id, status);
-        
         return orderDetailsRepository.findById(id)
                 .map(order -> {
-                    order.setStatus(status);
-                    OrderDetails updatedOrder = orderDetailsRepository.save(order);
-                    return convertToDTO(updatedOrder);
+                    try {
+                        OrderStatus newStatus = stateMachineService.progressOrder(order);
+                        OrderDetails updatedOrder = orderDetailsRepository.save(order);
+                        log.info("Order {} progressed successfully to status: {}", id, newStatus);
+                        return convertToDTO(updatedOrder);
+                    } catch (IllegalStateException e) {
+                        log.error("Cannot progress order {}: {}", id, e.getMessage());
+                        throw e;
+                    }
+                });
+    }
+
+    public Optional<OrderDetailsDTO> cancelOrder(Long id) {
+        log.info("Attempting to cancel order with ID: {}", id);
+        return orderDetailsRepository.findById(id)
+                .map(order -> {
+                    try {
+                        stateMachineService.cancelOrder(order);
+                        OrderDetails updatedOrder = orderDetailsRepository.save(order);
+                        log.info("Order {} canceled successfully. New status: {}", id, order.getStatus());
+                        return convertToDTO(updatedOrder);
+                    } catch (IllegalStateException e) {
+                        log.error("Cannot cancel order {}: {}", id, e.getMessage());
+                        throw e;
+                    }
+                });
+    }
+
+    public boolean canProgressOrder(Long id) {
+        return orderDetailsRepository.findById(id)
+                .map(order -> {
+                    boolean canProgress = stateMachineService.canProgressOrder(order);
+                    log.debug("Order {} can progress: {}", id, canProgress);
+                    return canProgress;
+                })
+                .orElse(false);
+    }
+
+    public boolean canCancelOrder(Long id) {
+        return orderDetailsRepository.findById(id)
+                .map(order -> {
+                    boolean canCancel = stateMachineService.canCancelOrder(order);
+                    log.debug("Order {} can cancel: {}", id, canCancel);
+                    return canCancel;
+                })
+                .orElse(false);
+    }
+
+    public Optional<String> getOrderStateDescription(Long id) {
+        return orderDetailsRepository.findById(id)
+                .map(order -> {
+                    String description = stateMachineService.getOrderStateDescription(order);
+                    log.debug("Order {} state description: {}", id, description);
+                    return description;
                 });
     }
 

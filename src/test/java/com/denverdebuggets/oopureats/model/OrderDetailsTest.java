@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class OrderDetailsTest {
     @Test
     void testConstructorAndGetters() {
-        OrderItem item1 = new OrderItem(null, "Burger", 10.0, "Tasty", 2);
-        OrderItem item2 = new OrderItem(null, "Fries", 5.0, "Crispy", 1);
+        OrderItem item1 = new OrderItem(null, "Burger", 10.0, "cooked cow with a bun and optional cheese", 2);
+        OrderItem item2 = new OrderItem(null, "Fries", 5.0, "super awesome french fries", 1);
         OrderDetails order = OrderDetails.builder()
             .restaurantType(ObserverEvents.PIZZA_RESTAURANT)
             .orderItems(List.of(item1, item2))
@@ -34,8 +34,8 @@ class OrderDetailsTest {
 
     @Test
     void testGetTotalAmount() {
-        OrderItem item1 = new OrderItem(null, "Burger", 10.0, "Tasty", 2);
-        OrderItem item2 = new OrderItem(null, "Fries", 5.0, "Crispy", 1);
+        OrderItem item1 = new OrderItem(null, "Burger", 10.0, "cooked cow with a bun and optional cheese", 2);
+        OrderItem item2 = new OrderItem(null, "Fries", 5.0, "super awesome french fries", 1);
         OrderDetails order = OrderDetails.builder()
             .restaurantType(ObserverEvents.PIZZA_RESTAURANT)
             .orderItems(List.of(item1, item2))
