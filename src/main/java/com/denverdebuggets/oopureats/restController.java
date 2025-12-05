@@ -164,7 +164,6 @@ public class restController {
     /**
      * Update order status directly (bypasses state machine validation)
      */
-    @
     @PutMapping("/{id}/status")
     public ResponseEntity<OrderDetailsDTO> updateOrderStatus(@PathVariable Long id, @RequestParam String status) {
         // to be implemented if needed
