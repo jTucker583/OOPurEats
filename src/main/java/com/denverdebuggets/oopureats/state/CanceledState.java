@@ -10,7 +10,7 @@ public class CanceledState extends OrderState {
 
     @Override
     public OrderStatus getStatus() {
-        return OrderStatus.DELIVERED;
+        return OrderStatus.CANCELED;
     }
 
     @Override
@@ -37,6 +37,6 @@ public class CanceledState extends OrderState {
 
     @Override
     public String getStateDescription() {
-        return "Order has been delivered to the customer. This is the final state.";
+        return "Order has been canceled. This is the final state.";
     }
 }

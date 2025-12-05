@@ -8,20 +8,33 @@ import java.util.List;
 
 public class OrderDetailsDTO {
     
+    private Long id;
     private ObserverEvents restaurantType;
     private List<OrderItem> orderItems;
     private Double totalAmount;
     private OrderStatus status;
     private LocalDateTime orderDate;
 
-    public OrderDetailsDTO(ObserverEvents restaurantType, List<OrderItem> orderItems,
-                          Double totalAmount, OrderStatus status, 
+    // No-args constructor for JSON deserialization
+    public OrderDetailsDTO() {}
+
+    public OrderDetailsDTO(Long id, ObserverEvents restaurantType, List<OrderItem> orderItems,
+                          Double totalAmount, OrderStatus status,
                           LocalDateTime orderDate) {
+        this.id = id;
         this.restaurantType = restaurantType;
         this.orderItems = orderItems;
         this.totalAmount = totalAmount;
         this.status = status;
         this.orderDate = orderDate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public ObserverEvents getRestaurantType() {
@@ -67,7 +80,8 @@ public class OrderDetailsDTO {
     @Override
     public String toString() {
         return "OrderDetailsDTO{" +
-                "restaurantType=" + restaurantType +
+                "id=" + id +
+                ", restaurantType=" + restaurantType +
                 ", orderItems='" + orderItems + '\'' +
                 ", totalAmount=" + totalAmount +
                 ", status=" + status +
@@ -75,4 +89,3 @@ public class OrderDetailsDTO {
                 '}';
     }
 }
-

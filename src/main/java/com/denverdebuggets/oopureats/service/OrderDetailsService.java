@@ -162,6 +162,7 @@ public class OrderDetailsService {
 
     private OrderDetailsDTO convertToDTO(OrderDetails order) {
         return new OrderDetailsDTO(
+                order.getId(),
                 order.getRestaurantType(),
                 order.getOrderItems(),
                 order.getTotalAmount(),
