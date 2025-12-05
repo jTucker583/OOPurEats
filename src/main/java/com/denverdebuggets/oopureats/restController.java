@@ -90,6 +90,86 @@ public class restController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // State Machine Integration Methods
+
+    /**
+     * Progress an order to the next state using the state machine
+     */
+    @PutMapping("/{id}/progress")
+    public ResponseEntity<OrderDetailsDTO> progressOrder(@PathVariable Long id) {
+        log.info("Progressing order with ID: {}", id);
+        try {
+            return orderDetailsService.progressOrder(id)
+                    .map(order -> {
+                        log.info("Order {} progressed successfully to status: {}", id, order.getStatus());
+                        return ResponseEntity.ok(order);
+                    })
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (IllegalStateException e) {
+            log.warn("Cannot progress order {}: {}", id, e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * Cancel an order using the state machine
+     */
+    @PutMapping("/{id}/cancel")
+    public ResponseEntity<OrderDetailsDTO> cancelOrder(@PathVariable Long id) {
+        log.info("Attempting to cancel order with ID: {}", id);
+        try {
+            return orderDetailsService.cancelOrder(id)
+                    .map(order -> {
+                        log.info("Order {} canceled successfully. New status: {}", id, order.getStatus());
+                        return ResponseEntity.ok(order);
+                    })
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (IllegalStateException e) {
+            log.warn("Cannot cancel order {}: {}", id, e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * Check if an order can be progressed to the next state
+     */
+    @GetMapping("/{id}/can-progress")
+    public ResponseEntity<Boolean> canProgressOrder(@PathVariable Long id) {
+        log.debug("Checking if order {} can be progressed", id);
+        boolean canProgress = orderDetailsService.canProgressOrder(id);
+        return ResponseEntity.ok(canProgress);
+    }
+
+    /**
+     * Check if an order can be canceled
+     */
+    @GetMapping("/{id}/can-cancel")
+    public ResponseEntity<Boolean> canCancelOrder(@PathVariable Long id) {
+        log.debug("Checking if order {} can be canceled", id);
+        boolean canCancel = orderDetailsService.canCancelOrder(id);
+        return ResponseEntity.ok(canCancel);
+    }
+
+    /**
+     * Get the current state description and available actions for an order
+     */
+    @GetMapping("/{id}/state")
+    public ResponseEntity<String> getOrderStateDescription(@PathVariable Long id) {
+        log.debug("Getting state description for order {}", id);
+        return orderDetailsService.getOrderStateDescription(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Update order status directly (bypasses state machine validation)
+     */
+    @
+    @PutMapping("/{id}/status")
+    public ResponseEntity<OrderDetailsDTO> updateOrderStatus(@PathVariable Long id, @RequestParam String status) {
+        // to be implemented if needed
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
