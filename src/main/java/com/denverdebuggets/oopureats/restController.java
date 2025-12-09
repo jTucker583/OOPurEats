@@ -76,7 +76,6 @@ public class restController {
     public ResponseEntity<OrderDetailsDTO> createOrder(@RequestBody OrderDetailsDTO orderDTO) {
         log.info("Creating new order via OrderBus for restaurant type: {}", orderDTO.getRestaurantType());
         orderBus.notifyObservers(orderDTO.getRestaurantType(), orderDTO);
-        
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

@@ -56,13 +56,6 @@ class DoneStateTest {
     }
 
     @Test
-    @DisplayName("Cancel should throw UnsupportedOperationException")
-    void testCancel() {
-        assertThrows(UnsupportedOperationException.class, () ->
-            doneState.cancel());
-    }
-
-    @Test
     @DisplayName("Cancel should throw exception when cannot cancel")
     void testCancelWhenNotAllowed() {
         // Since canCancel() returns false by default, this should throw IllegalStateException

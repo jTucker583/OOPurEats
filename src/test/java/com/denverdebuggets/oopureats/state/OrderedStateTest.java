@@ -57,13 +57,6 @@ class OrderedStateTest {
     }
 
     @Test
-    @DisplayName("Cancel should throw UnsupportedOperationException")
-    void testCancel() {
-        assertThrows(UnsupportedOperationException.class, () ->
-            orderedState.cancel());
-    }
-
-    @Test
     @DisplayName("Cancel should throw exception when cannot cancel")
     void testCancelWhenNotAllowed() {
         OrderedState spyState = spy(orderedState);

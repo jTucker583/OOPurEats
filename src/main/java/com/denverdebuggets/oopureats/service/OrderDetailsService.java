@@ -33,6 +33,7 @@ public class OrderDetailsService {
     }
     
 
+    // used instead in observer update pattern
     public OrderDetailsDTO createOrder(OrderDetailsDTO orderDTO) {
         log.info("Creating new order");
         OrderDetails order = convertToEntity(orderDTO);
@@ -173,6 +174,8 @@ public class OrderDetailsService {
 
     private OrderDetails convertToEntity(OrderDetailsDTO orderDTO) {
         OrderDetails.Builder builder = OrderDetails.builder()
+                .orderDate(orderDTO.getOrderDate())
+                .id(orderDTO.getId())
             .restaurantType(orderDTO.getRestaurantType())
             .orderItems(orderDTO.getOrderItems());
         if (orderDTO.getStatus() != null) {

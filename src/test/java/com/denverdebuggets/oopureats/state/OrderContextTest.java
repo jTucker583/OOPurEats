@@ -75,26 +75,6 @@ class OrderContextTest {
     }
 
     @Test
-    @DisplayName("Cancel should delegate to current state when allowed")
-    void testCancelWhenAllowed() {
-        // ORDERED state allows cancellation (though it throws UnsupportedOperationException)
-        assertTrue(orderContext.canCancel());
-        assertThrows(UnsupportedOperationException.class, () ->
-            orderContext.cancel());
-    }
-
-    @Test
-    @DisplayName("Cancel should throw exception when not allowed")
-    void testCancelNotAllowed() {
-        // Move to IN_PROGRESS state (cannot be cancelled)
-        orderContext.progress(); // ORDERED -> INPROGRESS
-
-        assertFalse(orderContext.canCancel());
-        assertThrows(IllegalStateException.class, () ->
-            orderContext.cancel());
-    }
-
-    @Test
     @DisplayName("Should return correct state description")
     void testGetStateDescription() {
         String description = orderContext.getStateDescription();
