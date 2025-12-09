@@ -8,10 +8,6 @@ A food delivery order management system built for CSCI 4448 (Object Oriented Ana
 ### Backend
 
 ```bash
-# Windows
-gradlew.bat bootRun
-
-# macOS/Linux
 ./gradlew bootRun
 ```
 
